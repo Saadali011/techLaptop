@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "803294915545",
+    "project_id": "harborlaptop",
+    "storage_bucket": "harborlaptop.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803294915545:android:4f1c2bade22f2df4a507c8",
+        "android_client_info": {
+          "package_name": "com.example.laptopharbor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgcorbPTap457z0-0TaxlaZbVANo65YvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
