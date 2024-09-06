@@ -13,21 +13,22 @@ class HomeHeader extends StatefulWidget {
 }
 
 class _HomeHeaderState extends State<HomeHeader> {
+  final FocusNode _focusNode = FocusNode();
   bool _isSearchFocused = false;
 
   @override
   void initState() {
     super.initState();
-    widget.focusNode.addListener(() {
+    _focusNode.addListener(() {
       setState(() {
-        _isSearchFocused = widget.focusNode.hasFocus;
+        _isSearchFocused = _focusNode.hasFocus;
       });
     });
   }
 
   @override
   void dispose() {
-    widget.focusNode.dispose();
+    _focusNode.dispose(); // Properly dispose of the FocusNode
     super.dispose();
   }
 
@@ -44,7 +45,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   ? MediaQuery.of(context).size.width * 0.9
                   : MediaQuery.of(context).size.width * 0.5,
               child: SearchField(
-                focusNode: widget.focusNode,
+                focusNode: _focusNode,
                 onSearchChanged: widget.onSearchChanged ?? (String value) {},
               ),
             ),
