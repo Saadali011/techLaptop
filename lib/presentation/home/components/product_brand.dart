@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../data/demo_data.dart';
 import '../../../models/Product.dart';
 import '../../products/products_screen.dart';
 import 'section_title.dart';

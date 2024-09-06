@@ -1,3 +1,4 @@
+import '../data/demo_data.dart';
 import 'Product.dart';
 
 class Cart {

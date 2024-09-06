@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../components/product_card.dart';
+import '../../../data/demo_data.dart';
 import '../../../models/Product.dart';
 import '../../details/details_screen.dart';
 import '../../products/products_screen.dart';
@@ -19,7 +20,7 @@ class PopularProducts extends StatelessWidget {
           child: SectionTitle(
             title: "Popular Products",
             press: () {
-               Navigator.pushNamed(context, ProductsScreen.routeName);
+              Navigator.pushNamed(context, ProductsScreen.routeName);
             },
           ),
         ),
@@ -41,8 +42,13 @@ class PopularProducts extends StatelessWidget {
                             context,
                             DetailsScreen.routeName,
                             arguments: ProductDetailsArguments(
-                                product: demoProducts[index]),
+                              product: demoProducts[index],
+                              onUpdate: (updatedProduct) {
+                                // Handle product update if necessary
+                              },
+                            ),
                           ),
+
                         ),
                       );
                     }

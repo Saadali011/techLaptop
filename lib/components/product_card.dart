@@ -1,34 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../constants.dart';
 import '../models/Product.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   const ProductCard({
     Key? key,
     this.width = 140,
-    this.aspectRetio = 1.02,
+    this.aspectRatio = 1.02,
     required this.product,
     required this.onPress,
   }) : super(key: key);
 
-  final double width, aspectRetio;
+  final double width, aspectRatio;
+
   final Product product;
   final VoidCallback onPress;
 
   @override
+  _ProductCardState createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  late Product product;
+
+  @override
+  void initState() {
+    super.initState();
+    product = widget.product;
+  }
+
+  void _toggleFavorite() {
+    setState(() {
+      product.toggleFavourite();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
+      width: widget.width,
       child: GestureDetector(
-        onTap: onPress,
+        onTap: widget.onPress,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: 1.02,
+              aspectRatio: widget.aspectRatio,
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -38,7 +57,6 @@ class ProductCard extends StatelessWidget {
                 child: Image.asset(product.images[0]),
               ),
             ),
-            // const SizedBox(height: 8),
             SizedBox(
               height: 40,
               child: Text(
@@ -58,32 +76,50 @@ class ProductCard extends StatelessWidget {
                     color: kPrimaryColor,
                   ),
                 ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(50),
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    height: 24,
-                    width: 24,
-                    decoration: BoxDecoration(
-                      color: product.isFavourite
-                          ? kPrimaryColor.withOpacity(0.15)
-                          : kSecondaryColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Heart Icon_2.svg",
-                      colorFilter: ColorFilter.mode(
-                          product.isFavourite
-                              ? const Color(0xFFFF4848)
-                              : const Color(0xFFDBDEE4),
-                          BlendMode.srcIn),
-                    ),
-                  ),
+                FavoriteIcon(
+                  isFavourite: product.isFavourite,
+                  onTap: _toggleFavorite,
                 ),
               ],
-            )
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FavoriteIcon extends StatelessWidget {
+  final bool isFavourite;
+  final VoidCallback onTap;
+
+  const FavoriteIcon({
+    Key? key,
+    required this.isFavourite,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(50),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        height: 24,
+        width: 24,
+        decoration: BoxDecoration(
+          color: isFavourite
+              ? kPrimaryColor.withOpacity(0.15)
+              : kSecondaryColor.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: SvgPicture.asset(
+          "assets/icons/Heart Icon_2.svg",
+          colorFilter: ColorFilter.mode(
+            isFavourite ? const Color(0xFFFF4848) : const Color(0xFFDBDEE4),
+            BlendMode.srcIn,
+          ),
         ),
       ),
     );

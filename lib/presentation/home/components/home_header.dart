@@ -4,30 +4,30 @@ import 'search_field.dart';
 
 class HomeHeader extends StatefulWidget {
   final ValueChanged<String>? onSearchChanged;
+  final FocusNode focusNode;
 
-  const HomeHeader({Key? key, this.onSearchChanged}) : super(key: key);
+  const HomeHeader({Key? key, this.onSearchChanged, required this.focusNode}) : super(key: key);
 
   @override
   _HomeHeaderState createState() => _HomeHeaderState();
 }
 
 class _HomeHeaderState extends State<HomeHeader> {
-  final FocusNode _focusNode = FocusNode();
   bool _isSearchFocused = false;
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(() {
+    widget.focusNode.addListener(() {
       setState(() {
-        _isSearchFocused = _focusNode.hasFocus;
+        _isSearchFocused = widget.focusNode.hasFocus;
       });
     });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    widget.focusNode.dispose();
     super.dispose();
   }
 
@@ -44,7 +44,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                   ? MediaQuery.of(context).size.width * 0.9
                   : MediaQuery.of(context).size.width * 0.5,
               child: SearchField(
-                focusNode: _focusNode,
+                focusNode: widget.focusNode,
                 onSearchChanged: widget.onSearchChanged ?? (String value) {},
               ),
             ),

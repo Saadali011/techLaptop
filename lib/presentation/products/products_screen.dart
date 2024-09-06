@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../components/product_card.dart';
+import '../../data/demo_data.dart';
 import '../../models/Product.dart';
 import '../details/details_screen.dart';
 import '../home/components/home_header.dart';
@@ -40,7 +41,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            HomeHeader(onSearchChanged: _handleSearchChanged), // Add the search header
+            SizedBox(height: 5),
+            HomeHeader(onSearchChanged: _handleSearchChanged,focusNode: FocusNode(),),
+            SizedBox(height: 10),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -57,7 +60,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     onPress: () => Navigator.pushNamed(
                       context,
                       DetailsScreen.routeName,
-                      arguments: ProductDetailsArguments(product: _filteredProducts[index]),
+                      arguments: ProductDetailsArguments(
+                        product: _filteredProducts[index],
+                        onUpdate: (updatedProduct) {
+                          // Handle product update if necessary
+                        },
+                      ),
                     ),
                   ),
                 ),

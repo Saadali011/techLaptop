@@ -14,9 +14,10 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductDetailsArguments agrs =
+    final ProductDetailsArguments args =
     ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
-    final product = agrs.product;
+    final product = args.product;
+    final onUpdate = args.onUpdate;
 
     return Scaffold(
       extendBody: true,
@@ -90,7 +91,7 @@ class DetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
                       "More Details",
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
                   TopRoundedContainer(
@@ -126,7 +127,8 @@ class DetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: ElevatedButton(
               onPressed: () {
-                // Navigator.pushNamed(context, CartScreen.routeName);
+                onUpdate(product); // Call onUpdate with the current product
+                Navigator.pop(context); // Navigate back
               },
               child: const Text("Add To Cart"),
             ),
@@ -139,6 +141,10 @@ class DetailsScreen extends StatelessWidget {
 
 class ProductDetailsArguments {
   final Product product;
+  final void Function(Product) onUpdate; // Correct type
 
-  ProductDetailsArguments({required this.product , });
+  ProductDetailsArguments({
+    required this.product,
+    required this.onUpdate,
+  });
 }
