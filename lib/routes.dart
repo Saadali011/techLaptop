@@ -1,4 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:laptopharbor/presentation/Notifications/notification.dart';
+import 'package:laptopharbor/presentation/cart/cart_screen.dart';
+import 'package:laptopharbor/presentation/chats/chat_screen.dart';
 import 'package:laptopharbor/presentation/details/details_screen.dart';
 import 'package:laptopharbor/presentation/home/components/product_brand.dart';
 import 'package:laptopharbor/presentation/home/home_screen.dart';
@@ -21,10 +24,14 @@ final Map<String, WidgetBuilder> routes = {
   HomeScreen.routeName: (context) => const HomeScreen(),
   DetailsScreen.routeName: (context) => const DetailsScreen(),
   ProductsScreen.routeName: (context) => const ProductsScreen(),
+  CartScreen.routeName: (context) => const CartScreen(),
+  NotificationScreen.routeName: (context) =>  NotificationScreen(),
+  ChatScreen.routeName: (context) =>  ChatScreen(),
+  '/login': (context) => SignInScreen(),
+
   // ForgotPasswordScreen.routeName: (context) => const ForgotPasswordScreen(),
   // LoginSuccessScreen.routeName: (context) => const LoginSuccessScreen(),
   // CompleteProfileScreen.routeName: (context) => const CompleteProfileScreen(),
   // OtpScreen.routeName: (context) => const OtpScreen(),
-  // CartScreen.routeName: (context) => const CartScreen(),
   // ProfileScreen.routeName: (context) => const ProfileScreen(),
 };

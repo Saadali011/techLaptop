@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../constants.dart';
-import '../../../models/Cart.dart';
+import '../../../models/cart.dart';  // Ensure this import is correct
 
 class CartCard extends StatelessWidget {
   const CartCard({
@@ -33,10 +33,13 @@ class CartCard extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              cart.product.title,
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-              maxLines: 2,
+            SizedBox(
+              width: 160,
+              child: Text(
+                cart.product.title,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+                maxLines: 2,
+              ),
             ),
             const SizedBox(height: 8),
             Text.rich(
@@ -46,13 +49,21 @@ class CartCard extends StatelessWidget {
                     fontWeight: FontWeight.w600, color: kPrimaryColor),
                 children: [
                   TextSpan(
-                      text: " x${cart.numOfItem}",
-                      style: Theme.of(context).textTheme.bodyLarge),
+                    text: " x${cart.numOfItem}",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ],
               ),
-            )
+            ),
           ],
-        )
+        ),
+        Spacer(),
+        IconButton(
+          onPressed: () {
+            // Implement remove from cart logic here
+          },
+          icon: SvgPicture.asset("assets/icons/Trash.svg"),
+        ),
       ],
     );
   }

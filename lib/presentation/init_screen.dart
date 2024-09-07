@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'chats/chat_screen.dart';
 import 'home/home_screen.dart';
 import 'favorite/favorite_screen.dart';
 import 'profile/profile_screen.dart';
@@ -19,11 +20,11 @@ class InitScreen extends StatefulWidget {
 class _InitScreenState extends State<InitScreen> {
   int _currentSelectedIndex = 0;
 
-  final pages = const [
-    HomeScreen(),
-    FavoriteScreen(),
-    Center(child: Text("Chat")),
-    ProfileScreen(),
+  final pages =  [
+    const HomeScreen(),
+    const FavoriteScreen(),
+    ChatScreen(),
+    const ProfileScreen(),
   ];
 
   void _updateCurrentIndex(int index) {

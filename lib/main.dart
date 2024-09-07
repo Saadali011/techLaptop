@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:laptopharbor/Provider/cart_provider.dart';
+import 'package:laptopharbor/Provider/chat_provider.dart';
+import 'package:laptopharbor/presentation/chats/chat_screen.dart';
+import 'package:provider/provider.dart'; // Make sure to import Provider
 import 'package:laptopharbor/presentation/splash_screen/splash_screen.dart';
 import 'package:laptopharbor/routes.dart';
 import 'theme.dart';
@@ -10,18 +14,26 @@ void main() async {
   runApp(MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Laptop Harbor',
-      theme: AppTheme.lightTheme(context),
-      initialRoute: SplashScreen.routeName,
-      routes: routes
+    return MultiProvider(
+      providers: [
+        // Add your providers here, e.g.,
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
+
+
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Laptop Harbor',
+        theme: AppTheme.lightTheme(context),
+        initialRoute: SplashScreen.routeName,
+        routes: routes,
+      ),
     );
   }
 }

@@ -13,7 +13,6 @@ class ProductCard extends StatefulWidget {
   }) : super(key: key);
 
   final double width, aspectRatio;
-
   final Product product;
   final VoidCallback onPress;
 
@@ -28,12 +27,19 @@ class _ProductCardState extends State<ProductCard> {
   void initState() {
     super.initState();
     product = widget.product;
+    _initializeFavoriteStatus();
   }
 
-  void _toggleFavorite() {
+  Future<void> _initializeFavoriteStatus() async {
+    bool isFavorite = await product.isFavourite; // Ensure this method returns a Future<bool>
     setState(() {
-      product.toggleFavourite();
+      product = product.copyWith(isFavourite: isFavorite);
     });
+  }
+
+  void _toggleFavorite() async {
+    await product.toggleFavourite();
+    _initializeFavoriteStatus(); // Update the favorite status after toggling
   }
 
   @override

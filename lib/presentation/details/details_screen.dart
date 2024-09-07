@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../models/Product.dart';
+import 'package:provider/provider.dart';
+import '../../../models/Product.dart';
+import '../../../models/cart.dart'; // Corrected import
+import '../../Provider/cart_provider.dart';
+import '../../data/demo_cart.dart';
+import '../cart/cart_screen.dart';
 import 'components/color_dots.dart';
 import 'components/product_description.dart';
 import 'components/product_images.dart';
@@ -14,8 +18,7 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProductDetailsArguments args =
-    ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
+    final ProductDetailsArguments args = ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
     final product = args.product;
     final onUpdate = args.onUpdate;
 
@@ -80,12 +83,7 @@ class DetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProductDescription(
-                    product: product,
-                    pressOnSeeMore: () {
-                      // Implement logic to show more description
-                    },
-                  ),
+                  ProductDescription(product: product),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -126,12 +124,25 @@ class DetailsScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: ElevatedButton(
-              onPressed: () {
-                onUpdate(product); // Call onUpdate with the current product
-                Navigator.pop(context); // Navigate back
-              },
+                onPressed: () {
+                  final cartProvider = Provider.of<CartProvider>(context, listen: false);
+                  bool itemExists = cartProvider.carts.any((cart) => cart.product.id == product.id);
+
+                  if (itemExists) {
+                    cartProvider.carts
+                        .firstWhere((cart) => cart.product.id == product.id)
+                        .numOfItem++;
+                  } else {
+
+                    cartProvider.addToCart(Cart(product: product, numOfItem: 1));
+                  }
+
+                  Navigator.of(context).pushReplacementNamed(CartScreen.routeName);
+                },
               child: const Text("Add To Cart"),
             ),
+
+
           ),
         ),
       ),
@@ -141,7 +152,7 @@ class DetailsScreen extends StatelessWidget {
 
 class ProductDetailsArguments {
   final Product product;
-  final void Function(Product) onUpdate; // Correct type
+  final void Function(Product) onUpdate;
 
   ProductDetailsArguments({
     required this.product,

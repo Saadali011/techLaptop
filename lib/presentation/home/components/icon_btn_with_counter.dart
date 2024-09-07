@@ -7,16 +7,17 @@ class IconBtnWithCounter extends StatelessWidget {
   const IconBtnWithCounter({
     Key? key,
     required this.svgSrc,
-    this.numOfitem = 0,
+    required this.notifications, // Pass notifications list
     required this.press,
   }) : super(key: key);
 
   final String svgSrc;
-  final int numOfitem;
+  final List<String> notifications; // List of notifications
   final GestureTapCallback press;
 
   @override
   Widget build(BuildContext context) {
+    int numOfitem = notifications.length; // Count the notifications
     return InkWell(
       borderRadius: BorderRadius.circular(100),
       onTap: press,
@@ -47,7 +48,7 @@ class IconBtnWithCounter extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    "$numOfitem",
+                    "${numOfitem > 9 ? '9+' : numOfitem}", // Display '9+' if notifications exceed 9
                     style: const TextStyle(
                       fontSize: 12,
                       height: 1,

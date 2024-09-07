@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:laptopharbor/presentation/home/components/search_field.dart';
+import '../../../data/demo_data.dart';
+import '../../Notifications/notification.dart';
+import '../../cart/cart_screen.dart';
 import 'icon_btn_with_counter.dart';
-import 'search_field.dart';
 
 class HomeHeader extends StatefulWidget {
   final ValueChanged<String>? onSearchChanged;
@@ -15,6 +19,7 @@ class HomeHeader extends StatefulWidget {
 class _HomeHeaderState extends State<HomeHeader> {
   final FocusNode _focusNode = FocusNode();
   bool _isSearchFocused = false;
+  List<String> notifications = [];
 
   @override
   void initState() {
@@ -24,12 +29,29 @@ class _HomeHeaderState extends State<HomeHeader> {
         _isSearchFocused = _focusNode.hasFocus;
       });
     });
+    _loadNotifications();
   }
 
   @override
   void dispose() {
-    _focusNode.dispose(); // Properly dispose of the FocusNode
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      notifications = prefs.getStringList('notifications') ?? [];
+    });
+  }
+
+  Future<void> _saveNotification(String notification) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> updatedNotifications = [...notifications, notification];
+    prefs.setStringList('notifications', updatedNotifications);
+    setState(() {
+      notifications = updatedNotifications;
+    });
   }
 
   @override
@@ -56,14 +78,25 @@ class _HomeHeaderState extends State<HomeHeader> {
             child: Row(
               children: [
                 IconBtnWithCounter(
-                  svgSrc: "assets/icons/Cart Icon.svg",
-                  press: () {},
+                    svgSrc: "assets/icons/Cart Icon.svg",
+                    notifications: notifications,
+                    press: () { Navigator.pushNamed(context, CartScreen.routeName); }
                 ),
                 const SizedBox(width: 8),
                 IconBtnWithCounter(
                   svgSrc: "assets/icons/Bell.svg",
-                  numOfitem: 3,
-                  press: () {},
+                  notifications: notifications,
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(
+                          notifications: notifications,
+                          products: [demoProducts[0]], // Example product data
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

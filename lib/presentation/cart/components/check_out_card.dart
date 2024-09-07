@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../constants.dart';
+import '../../../data/demo_cart.dart';
+import '../../../data/demo_data.dart';
+import '../../../models/Cart.dart';
+import '../../../models/Product.dart';
+import '../../Notifications/notification.dart';
 
 class CheckoutCard extends StatelessWidget {
+  final double totalPrice;
+
   const CheckoutCard({
     Key? key,
+    required this.totalPrice,
   }) : super(key: key);
 
   @override
@@ -15,7 +21,6 @@ class CheckoutCard extends StatelessWidget {
         vertical: 16,
         horizontal: 20,
       ),
-      // height: 174,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -35,47 +40,27 @@ class CheckoutCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F6F9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SvgPicture.asset("assets/icons/receipt.svg"),
-                ),
-                const Spacer(),
-                const Text("Add voucher code"),
-                const SizedBox(width: 8),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: kTextColor,
-                )
-              ],
-            ),
             const SizedBox(height: 16),
             Row(
               children: [
-                const Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: "Total:\n",
-                      children: [
-                        TextSpan(
-                          text: "\$337.15",
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                      ],
+                Expanded(
+                  child: Text(
+                    "Total:\n ${totalPrice > 0 ? "\$$totalPrice" : ""}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Poppins",
+                      fontSize: 16,
                     ),
                   ),
                 ),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () {
+                      _showOrderConfirmationDialog(context);
+                    },
                     child: const Text("Check Out"),
                   ),
                 ),
@@ -86,4 +71,51 @@ class CheckoutCard extends StatelessWidget {
       ),
     );
   }
+
+  void _showOrderConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Order Confirmed"),
+          content: const Text("Your order has been placed successfully."),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _navigateToNotificationScreen(context);
+                // Add order notification
+                List<Product> addedProducts = [demoProducts[0]]; // Example product added to cart
+                notifications.add("Your order has been placed: ${addedProducts.map((p) => p.title).join(', ')}");
+                // Clear cart items
+                demoCarts.clear();
+                // Refresh the cart screen
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToNotificationScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NotificationScreen(
+          notifications: notifications, // Show all notifications
+          products: [demoProducts[0]], // Pass the product data (example)
+        ),
+      ),
+    );
+  }
 }
+
+// Example notifications list
+List<String> notifications = [
+  "You have a new message",
+  "Your order has been shipped",
+  // Add more notifications as needed
+];

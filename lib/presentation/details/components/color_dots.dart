@@ -4,39 +4,58 @@ import '../../../components/rounded_icon_btn.dart';
 import '../../../constants.dart';
 import '../../../models/Product.dart';
 
-class ColorDots extends StatelessWidget {
-  const ColorDots({
-    Key? key,
-    required this.product,
-  }) : super(key: key);
-
+class ColorDots extends StatefulWidget {
   final Product product;
+
+  const ColorDots({Key? key, required this.product}) : super(key: key);
+
+  @override
+  _ColorDotsState createState() => _ColorDotsState();
+}
+
+class _ColorDotsState extends State<ColorDots> {
+  int selectedColor = 0; // Initially selected color
 
   @override
   Widget build(BuildContext context) {
-    // Now this is fixed and only for demo
-    int selectedColor = 3;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           ...List.generate(
-            product.colors.length,
-            (index) => ColorDot(
-              color: product.colors[index],
-              isSelected: index == selectedColor,
+            widget.product.colors.length,
+                (index) => GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedColor = index;
+                });
+              },
+              child: ColorDot(
+                color: widget.product.colors[index],
+                isSelected: index == selectedColor,
+              ),
             ),
           ),
           const Spacer(),
           RoundedIconBtn(
             icon: Icons.remove,
-            press: () {},
+            press: () {
+              setState(() {
+                if (widget.product.numOfItem > 1) {
+                  widget.product.numOfItem--; // Decrease quantity
+                }
+              });
+            },
           ),
           const SizedBox(width: 20),
           RoundedIconBtn(
             icon: Icons.add,
             showShadow: true,
-            press: () {},
+            press: () {
+              setState(() {
+                widget.product.numOfItem++; // Increase quantity
+              });
+            },
           ),
         ],
       ),
@@ -45,14 +64,14 @@ class ColorDots extends StatelessWidget {
 }
 
 class ColorDot extends StatelessWidget {
+  final Color color;
+  final bool isSelected;
+
   const ColorDot({
     Key? key,
     required this.color,
     this.isSelected = false,
   }) : super(key: key);
-
-  final Color color;
-  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +82,9 @@ class ColorDot extends StatelessWidget {
       width: 40,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        border:
-            Border.all(color: isSelected ? kPrimaryColor : Colors.transparent),
+        border: Border.all(
+          color: isSelected ? color : Colors.transparent,
+        ),
         shape: BoxShape.circle,
       ),
       child: DecoratedBox(

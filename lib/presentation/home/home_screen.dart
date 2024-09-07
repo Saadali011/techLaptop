@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/product_card.dart';
 import '../../data/demo_data.dart';
 import '../../models/Product.dart';
@@ -24,6 +25,42 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
   final FocusNode _searchFocusNode = FocusNode();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSearchQuery();  // Load search query from SharedPreferences
+    _searchFocusNode.addListener(() {
+      if (!_searchFocusNode.hasFocus) {
+        FocusScope.of(context).unfocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSearchQuery() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _searchQuery = prefs.getString('searchQuery') ?? '';
+      _filteredProducts = demoProducts.where((product) {
+        final productTitle = product.title.toLowerCase();
+        final productBrand = product.brandName.toLowerCase();
+        final searchLowerCase = _searchQuery.toLowerCase();
+        return productTitle.contains(searchLowerCase) ||
+            productBrand.contains(searchLowerCase);
+      }).toList();
+    });
+  }
+
+  Future<void> _saveSearchQuery(String query) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('searchQuery', query);
+  }
+
   void _handleSearchChanged(String query) {
     setState(() {
       _searchQuery = query;
@@ -35,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             productBrand.contains(searchLowerCase);
       }).toList();
     });
+    _saveSearchQuery(query);  // Save search query to SharedPreferences
   }
 
   void _updateProduct(Product updatedProduct) {
@@ -48,29 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    // Add focus change listener
-    _searchFocusNode.addListener(() {
-      if (!_searchFocusNode.hasFocus) {
-        // Close keyboard when focus is lost
-        FocusScope.of(context).unfocus();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          // Unfocus the search field when tapping outside
           FocusScope.of(context).unfocus();
         },
         child: SafeArea(
@@ -113,9 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 product: _filteredProducts[index],
                                 onUpdate: _updateProduct,
                               ),
-                            ) as Product?; // Cast the result as Product
+                            ) as Product?;
                             if (updatedProduct != null) {
-                              _updateProduct(updatedProduct); // Handle updated product
+                              _updateProduct(updatedProduct);
                             }
                           },
                         );
@@ -129,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   delegate: SliverChildListDelegate(
                     [
                       DiscountBanner(),
-                      Categories(),
                       PopularBrands(),
                       SizedBox(height: 20),
                       PopularProducts(),

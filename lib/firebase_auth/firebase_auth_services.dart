@@ -67,5 +67,14 @@ class FirebaseAuthService {
       return null;
     }
   }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      print('Sign out error: $e');
+    }
+  }
+
 }
 

@@ -18,26 +18,30 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<List<Product>> _loadFavoriteProducts() async {
     List<String> favoriteIds = await ProductPreferences.loadFavorites();
 
-    // Fetch products from the repository or data source
-    List<Product> favoriteProducts = [];
-    for (String id in favoriteIds) {
+    // Use Future.wait to fetch all products concurrently
+    List<Future<Product>> productFutures = favoriteIds.map((id) async {
       try {
-        Product product = await _fetchProductById(id);
-        favoriteProducts.add(product);
+        return Product.getProductById(id);
       } catch (e) {
-        // Handle errors
+        print("Error fetching product with ID $id: $e");
+        // Return a default product instead of null
+        return Product(
+          id: id,
+          title: 'Unknown',
+          brandName: 'Unknown',
+          images: [],
+          price: 0.0,
+          description: 'No description',
+          rating: 0.0,
+          colors: [Colors.grey],
+        );
       }
-    }
+    }).toList();
+
+    // Wait for all futures to complete
+    List<Product> favoriteProducts = await Future.wait(productFutures);
 
     return favoriteProducts;
-  }
-
-  Future<Product> _fetchProductById(String id) async {
-    // Replace with actual product fetching logic
-    return demoProducts.firstWhere(
-          (product) => product.id == id,
-      orElse: () => throw Exception('Product not found'),
-    );
   }
 
   @override
@@ -88,7 +92,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                           product: favoriteProducts[index],
                           onUpdate: (updatedProduct) {
                             setState(() {
-                              // Update the product and save the state
                               favoriteProducts[index] = updatedProduct;
                             });
                           },

@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../data/demo_data.dart';
+import '../../firebase_auth/firebase_auth_services.dart';
+import '../Notifications/notification.dart';
 import 'components/profile_menu.dart';
 import 'components/profile_pic.dart';
 
@@ -22,7 +25,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
+  List<String> notifications = [];
 
+
+  final FirebaseAuthService _authService = FirebaseAuthService(); // Instance of FirebaseAuthService
+
+  Future<void> _handleSignOut() async {
+    await _authService.signOut();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
   // @override
   // void initState() {
   //   super.initState();
@@ -229,13 +240,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileMenu(
               text: "Notifications",
               icon: "assets/icons/Bell.svg",
-              press: () {},
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NotificationScreen(
+                      notifications: notifications,
+                      products: [demoProducts[0]], // Example product data
+                    ),
+                  ),
+                );
+
+              },
             ),
-            ProfileMenu(
-              text: "Settings",
-              icon: "assets/icons/Settings.svg",
-              press: () {},
-            ),
+            // ProfileMenu(
+            //   text: "Change Password",
+            //   icon: "assets/icons/lock.svg",
+            //   press: () {},
+            // ),
             ProfileMenu(
               text: "Help Center",
               icon: "assets/icons/Question mark.svg",
@@ -244,7 +266,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileMenu(
               text: "Log Out",
               icon: "assets/icons/Log out.svg",
-              press: () {},
+              press: () async  {
+                await _handleSignOut();
+              },
             ),
           ],
         ),
